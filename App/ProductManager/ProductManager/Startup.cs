@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NJsonSchema;
 using NSwag.AspNetCore;
+using ProductManager.Contracts.Services;
+using ProductManager.DataAccess;
+using ProductManager.Models.Mapper;
+using ProductManager.Services;
 
 namespace ProductManager
 {
@@ -27,6 +32,13 @@ namespace ProductManager
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			MapperConfig.Initialize();
+			services.AddDbContext<ProductsContext>(options =>
+			{
+				options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+			});
+			services.AddScoped<IProductService, ProductService>();
+
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 			services.AddApiVersioning(o => {
 				o.ReportApiVersions = true;
@@ -42,6 +54,7 @@ namespace ProductManager
 			{
 				app.UseDeveloperExceptionPage();
 			}
+			app.UseDefaultFiles();
 			app.UseStaticFiles();
 			app.UseSwaggerUi(typeof(Startup).GetTypeInfo().Assembly, settings =>
 			{

@@ -9,8 +9,8 @@ namespace ProductManager.Contracts.Services
 	{
 		FullProductDTO Add(ProductBaseDTO model);
 		void Delete(int id);
-		FullProductDTO Update(ProductBaseDTO model);
-		FullProductDTO Get();
+		FullProductDTO Update(UpdateProductDTO model);
+		IEnumerable<FullProductDTO> Get();
 		FullProductDTO Get(int id);
 	}
 }

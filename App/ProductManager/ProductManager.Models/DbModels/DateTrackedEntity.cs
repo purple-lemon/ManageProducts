@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ProductManager.Models.DbModels
 {
-	public abstract class DataTrackedEntity
+	public abstract class DateTrackedEntity
 	{
 		public DateTime Created { get; set; }
 		public DateTime LastUpdated { get; set; }
