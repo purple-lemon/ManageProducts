@@ -51,5 +51,10 @@ namespace ProductManager.Services
 			context.SaveChanges();
 			return Mapper.Map<FullProductDTO>(mappedProduct);
 		}
+
+		public bool VerifyCode(string code)
+		{
+			return context.Products.AsNoTracking().FirstOrDefault(x => x.Code.ToLower() == code.ToLower()) == null;
+		}
 	}
 }

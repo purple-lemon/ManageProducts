@@ -12,5 +12,6 @@ namespace ProductManager.Contracts.Services
 		FullProductDTO Update(UpdateProductDTO model);
 		IEnumerable<FullProductDTO> Get();
 		FullProductDTO Get(int id);
+		bool VerifyCode(string code);
 	}
 }

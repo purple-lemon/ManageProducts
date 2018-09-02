@@ -13,16 +13,16 @@ namespace ProductManager.Controllers
 	[Route("api/{version:apiVersion}/products")]
     public class ProductController : Controller
     {
-		public IProductService ProductService { get; set; }
+		public IProductService Service { get; set; }
 		public ProductController(IProductService service)
 		{
-			ProductService = service;
+			Service = service;
 		}
 
 		[HttpGet]
         public ActionResult<List<FullProductDTO>> Index()
         {
-			return Ok(ProductService.Get());
+			return Ok(Service.Get());
         }
 
 		[Route("{id}")]
@@ -35,7 +35,17 @@ namespace ProductManager.Controllers
 		[HttpPost]
 		public ActionResult<FullProductDTO> Add([FromBody]ProductBaseDTO model)
 		{
-			return Created(Url.Action("Get", new { id = 10 }), new FullProductDTO());
+			if (Service.VerifyCode(model.Code))
+			{
+				var added = Service.Add(model);
+				return Created(Url.Action("Get", new { id = added.Id }), added);
+			} else
+			{
+				return BadRequest(new
+				{
+					codeNotUnique = true
+				});
+			}
 		}
     }
 }
