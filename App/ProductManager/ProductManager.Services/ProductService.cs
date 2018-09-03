@@ -56,5 +56,10 @@ namespace ProductManager.Services
 		{
 			return context.Products.AsNoTracking().FirstOrDefault(x => x.Code.ToLower() == code.ToLower()) == null;
 		}
+
+		public bool VerifyCode(string code, int id)
+		{
+			return context.Products.AsNoTracking().FirstOrDefault(x => x.Code.ToLower() == code.ToLower() && x.Id != id) == null;
+		}
 	}
 }

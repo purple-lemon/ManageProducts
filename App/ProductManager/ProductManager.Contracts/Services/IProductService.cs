@@ -13,5 +13,6 @@ namespace ProductManager.Contracts.Services
 		IEnumerable<FullProductDTO> Get();
 		FullProductDTO Get(int id);
 		bool VerifyCode(string code);
+		bool VerifyCode(string code, int id);
 	}
 }

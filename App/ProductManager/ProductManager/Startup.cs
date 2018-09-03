@@ -38,7 +38,7 @@ namespace ProductManager
 				options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
 			});
 			services.AddScoped<IProductService, ProductService>();
-
+			services.AddScoped<IDataExporter, DataExporter>();
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 			services.AddApiVersioning(o => {
 				o.ReportApiVersions = true;

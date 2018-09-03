@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 	<link rel="stylesheet" href="SPA/app.css" />
-	
+
 </head>
 <body>
 	<header>
@@ -21,6 +21,9 @@
 		</div>
 	</header>
 	<div class="container">
+		<div class="loader-placeholder">
+			<div class="loader"></div>
+		</div>
 		<div class="products-all" data-bind="if: activeMode() == 1 ">
 			<div class="d-flex justify-content-between add-row">
 				<div>
@@ -28,6 +31,7 @@
 				</div>
 				<div>
 					<button type="button" class="btn btn-primary" data-bind="click: switchToAddMode">Add new</button>
+					<a href="/api/1.0/export" class="btn btn-success">Export to excel</a>
 				</div>
 			</div>
 			<div>
@@ -46,45 +50,55 @@
 							<th scope="row" data-bind="text: code"></th>
 							<td data-bind="text: name"></td>
 							<td data-bind="text: price"></td>
-							<td data-bind="text: updated"></td>
-							<td>
-								<i class="fas fa-pencil-alt"></i>
+							<td data-bind="text: lastUpdated"></td>
+							<td class="actions-group">
+								<a href="#edit">
+									<i class="fas fa-pencil-alt" data-bind="click: $root.switchToEdit"></i>
+								</a>
+								<a href="#delete">
+									<i class="fas fa-trash-alt" data-bind="click: $root.delete"></i>
+								</a>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
-		<div class="products-add" data-bind="if: activeMode() == 3 && product()">
-			<div class="d-flex justify-content-between add-row">
-				<div>
-					<h3>Products add</h3>
-				</div>
-				<div>
-					<button type="button" class="btn btn-primary" data-bind="click: addProduct">Save</button>
-					<button type="button" class="btn btn-dark" data-bind="click: cancelEditAdd">Cancel</button>
-				</div>
-			</div>
+		<div class="products-add" data-bind="if: (activeMode() == 3 || activeMode() == 2) && product()">
 			<form>
+				<div class="d-flex justify-content-between add-row">
+					<div>
+						<h3>Products add</h3>
+					</div>
+					<div>
+						<button type="submit" class="btn btn-primary" data-bind="click: addProduct">Save</button>
+						<button type="button" class="btn btn-dark" data-bind="click: cancelEditAdd">Cancel</button>
+					</div>
+				</div>
 				<div class="form-group">
 					<label for="productCode">Unique code</label>
-					<input data-bind="value: product().code" type="text" class="form-control" id="productCode" aria-describedby="productCodeHelp" placeholder="Enter code" />
+					<input data-bind="value: product().code" type="text" class="form-control" id="productCode" aria-describedby="productCodeHelp" placeholder="Enter code" required />
 					<small id="productCodeHelp" class="form-text text-muted">Product code must be unique</small>
+					<div class="invalid-feedback">Please put Code</div>
+					<div class="not-uniq-code">Selected code already in use</div>
 				</div>
 				<div class="form-group">
 					<label for="productName">Name</label>
-					<input data-bind="value: product().name" type="text" class="form-control" id="productName" placeholder="Name" />
+					<input data-bind="value: product().name" type="text" class="form-control" id="productName" placeholder="Name" required />
+					<div class="invalid-feedback">Please populate name</div>
 				</div>
 				<div class="form-group">
 					<label for="productPrice">Price</label>
-					<input data-bind="value: product().price" type="number" min="0" class="form-control" id="productPrice" placeholder="0" />
-					<div data-bind="visible: priceConfirmRequired()">
-						<label for="productPriceConfirm">Please confirm price</label>
-						<input type="checkbox" data-bind="value: priceConfirmed" id="productPriceConfirm" />
-					</div>
+					<input data-bind="value: product().price" type="number" min="0" class="form-control" id="productPrice" placeholder="0" required />
+				</div>
+				<div class="form-group confirm-price" data-bind="visible: priceConfirmRequired()">
+					<label for="productPriceConfirm">Please confirm price</label>
+					<input type="checkbox" data-bind="checked: priceConfirmed" id="productPriceConfirm" />
+					<div class="invalid-feedback">You need to confirm price  > 999 </div>
 				</div>
 			</form>
 		</div>
+		<!--<button class="btn btn-primary" value="Testit" data-bind="click: redirect">OK</button>-->
 	</div>
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -93,6 +107,17 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js' crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/page.js/1.8.6/page.js"></script>
+	<script>
+		function showLoader() {
+			$(".loader-placeholder").show();
+			$(".products-all").hide();
+		}
+		function hideLoader() {
+			$(".loader-placeholder").hide();
+			$(".products-all").show();
+		}
+	</script>
 	<script src="SPA/app_context.js"></script>
 </body>
 </html>

@@ -27,7 +27,7 @@ namespace ProductManager.Controllers
 
 		[Route("{id}")]
 		[HttpGet]
-		public ActionResult<FullProductDTO> Get([FromQuery]int id)
+		public ActionResult<FullProductDTO> Get(int id)
 		{
 			return Ok(new FullProductDTO() { Name = "asd", Price = 100 });
 		}
@@ -46,6 +46,29 @@ namespace ProductManager.Controllers
 					codeNotUnique = true
 				});
 			}
+		}
+
+		[HttpPut]
+		public ActionResult<FullProductDTO> Edit([FromBody] UpdateProductDTO model)
+		{
+			if (Service.VerifyCode(model.Code, model.Id))
+			{
+				Service.Update(model);
+				return Ok(model);
+			} else
+			{
+				return BadRequest(new
+				{
+					codeNotUnique = true
+				});
+			}
+		}
+		[HttpDelete]
+		[Route("{id}")]
+		public ActionResult Delete(int id)
+		{
+			Service.Delete(id);
+			return Ok();
 		}
     }
 }

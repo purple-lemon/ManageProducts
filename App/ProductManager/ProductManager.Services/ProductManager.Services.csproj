@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="4.5.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ProductManager.Contracts\ProductManager.Contracts.csproj" />
     <ProjectReference Include="..\ProductManager.DataAccess\ProductManager.DataAccess.csproj" />
     <ProjectReference Include="..\ProductManager.Models\ProductManager.Models.csproj" />
